@@ -16,7 +16,7 @@
   };
 
   ns.MiscExportController.prototype.onDownloadApngClick_ = function (evt) {
-    var fileName = this.getPiskelName_() + '.png';
+    var fileName = this.piskelController.getPiskel().getDescriptor().name + '.apng';
     var width = this.piskelController.getWidth();
     var height = this.piskelController.getHeight();
     var frameCount = this.piskelController.getFrameCount();
