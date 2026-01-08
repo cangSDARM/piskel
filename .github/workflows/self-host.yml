@@ -1,0 +1,50 @@
+name: Self Host
+
+on:
+  workflow_dispatch:
+    inputs:
+      dev-branch:
+        description: 'Branch(default main)'
+        required: true
+        type: string
+        default: 'main'
+      host-branch:
+        description: 'gh-pages branch'
+        required: false
+        type: string
+        default: 'gh-pages'
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  sync-to-host-page:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.host-branch }}
+
+      - name: Environment Setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: "22.x"
+
+      - name: Install dependencies without Proxy
+        # only install when cache miss or package.json changed
+        run: npm --proxy=null --https_proxy=null --strict-ssl=true install
+
+      - name: Build
+        run: ./node_modules/.bin/grunt build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: ${{ github.event.inputs.host-branch }}
+          publish_dir: ./dest/prod/
