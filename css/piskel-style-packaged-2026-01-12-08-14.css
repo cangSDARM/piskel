@@ -445,6 +445,10 @@ body {
   height: 23px;
 }
 
+.textfield[type="number"]::-webkit-inner-spin-button {
+  display: none;
+}
+
 .textfield[readonly="true"] {
   background: transparent;
 }
@@ -2320,8 +2324,8 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
   padding:5px;
 }
 #dialog-container.import {
-  width: 500px;
-  height: 350px;
+  width: 575px;
+  height: 405px;
   top : 50%;
   left : 50%;
   position : absolute;
@@ -2404,11 +2408,11 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
   display: inline-block;
   border: 1px dashed #999;
   border-radius: 3px;
-  margin-left: 50%;
+  margin-left: 250px;
   top: 10px;
 
-  width: 220px;
-  height: 220px;
+  width: 300px;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;

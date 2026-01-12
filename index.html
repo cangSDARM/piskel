@@ -783,13 +783,18 @@
     </div>
     <div class="import-section import-subsection">
       <span class="dialog-section-title">Frame size</span>
-      <input type="text" class="textfield import-size-field" autocomplete="off" name="frame-size-x"/>x
-      <input type="text" class="textfield import-size-field" autocomplete="off" name="frame-size-y"/>
+      <input type="number" class="textfield import-size-field" autocomplete="off" name="frame-size-x"/>x
+      <input type="number" class="textfield import-size-field" autocomplete="off" name="frame-size-y"/>
     </div>
     <div class="import-section import-subsection">
       <span class="dialog-section-title">Offset</span>
-      <input type="text" class="textfield import-size-field" autocomplete="off" name="frame-offset-x"/>x
-      <input type="text" class="textfield import-size-field" autocomplete="off" name="frame-offset-y"/>
+      <input type="number" class="textfield import-size-field" autocomplete="off" name="frame-offset-x"/>x
+      <input type="number" class="textfield import-size-field" autocomplete="off" name="frame-offset-y"/>
+    </div>
+    <div class="import-section import-subsection">
+      <span class="dialog-section-title">Margin</span>
+      <input type="number" class="textfield import-size-field" autocomplete="off" name="frame-margin-x"/>x
+      <input type="number" class="textfield import-size-field" autocomplete="off" name="frame-margin-y"/>
     </div>
   </form>
   <div class="import-step-buttons">
@@ -1406,6 +1411,12 @@
       </div>
       <button type="button" class="button button-primary c-download-button">Download C file</button>
     </div>
+    <div class="export-panel-section">
+      <div style="padding-bottom: 5px">
+        <span class="highlight">Export as Apng Format: </span>
+      </div>
+      <button type="button" class="button button-primary apng-download-button">Download APNG file</button>
+    </div>
   </div>
 </script>
 
@@ -1413,9 +1424,9 @@
     (function () {
 
   /**
-   * See @Gruntfile.js => after build, -2026-01-08-06-41 is replaced by the build version
+   * See @Gruntfile.js => after build, -2026-01-12-08-14 is replaced by the build version
    */
-  var version = '-2026-01-08-06-41';
+  var version = '-2026-01-12-08-14';
   var versionHasNotBeenReplaced = version.indexOf('@@') === 0;
   if (versionHasNotBeenReplaced)  {
     version = '';
