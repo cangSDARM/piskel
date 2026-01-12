@@ -50,6 +50,8 @@
     var frameSizeY = options.frameSizeY;
     var frameOffsetX = options.frameOffsetX;
     var frameOffsetY = options.frameOffsetY;
+    var frameMarginX = options.frameMarginX;
+    var frameMarginY = options.frameMarginY;
 
     var gifLoader = new window.SuperGif({
       gif: image
@@ -67,7 +69,7 @@
           piskel = this.createPiskelFromImages_(images, name, frameSizeX, frameSizeY, smoothing);
         } else {
           // Spritesheet
-          var frameImages = this.createImagesFromSheet_(images[0], frameSizeX, frameSizeY, frameOffsetX, frameOffsetY);
+          var frameImages = this.createImagesFromSheet_(images[0], frameSizeX, frameSizeY, frameOffsetX, frameOffsetY, frameMarginX, frameMarginY);
           piskel = this.createPiskelFromImages_(frameImages, name, frameSizeX, frameSizeY, smoothing);
         }
         onComplete(piskel);
@@ -79,7 +81,7 @@
           piskel = this.createPiskelFromImages_([image], name, frameSizeX, frameSizeY, smoothing);
         } else {
           // Spritesheet
-          var frameImages = this.createImagesFromSheet_(image, frameSizeX, frameSizeY, frameOffsetX, frameOffsetY);
+          var frameImages = this.createImagesFromSheet_(image, frameSizeX, frameSizeY, frameOffsetX, frameOffsetY, frameMarginX, frameMarginY);
           piskel = this.createPiskelFromImages_(frameImages, name, frameSizeX, frameSizeY, smoothing);
         }
         onComplete(piskel);
@@ -97,15 +99,20 @@
    * @private
    */
   ns.ImportService.prototype.createImagesFromSheet_ = function (image,
-    frameSizeX, frameSizeY, frameOffsetX, frameOffsetY) {
+    frameSizeX, frameSizeY, frameOffsetX, frameOffsetY, frameMarginX = 0, frameMarginY = 0) {
     return pskl.utils.CanvasUtils.createFramesFromImage(
       image,
       frameOffsetX,
       frameOffsetY,
       frameSizeX,
       frameSizeY,
-      /*useHorizonalStrips=*/ true,
-      /*ignoreEmptyFrames=*/ true);
+      frameMarginX,
+      frameMarginY,
+      {
+        useHorizontalStrips: true,
+        ignoreEmptyFrames: true,
+      }
+    );
   };
 
   /**
