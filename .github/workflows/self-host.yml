@@ -1,18 +1,6 @@
 name: Self Host
 
 on:
-  workflow_dispatch:
-    inputs:
-      dev-branch:
-        description: 'Branch(default main)'
-        required: true
-        type: string
-        default: 'self-host'
-      host-branch:
-        description: 'gh-pages branch'
-        required: false
-        type: string
-        default: 'gh-pages'
   push:
 
 permissions:
@@ -29,7 +17,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.inputs.host-branch }}
 
       - name: Environment Setup
         uses: actions/setup-node@v1
@@ -47,5 +34,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: ${{ github.event.inputs.host-branch }}
+          publish_branch: gh-pages
           publish_dir: ./dest/prod/
