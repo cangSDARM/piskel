@@ -30,6 +30,8 @@
     this.frameSizeY = this.container.querySelector('[name=frame-size-y]');
     this.frameOffsetX = this.container.querySelector('[name=frame-offset-x]');
     this.frameOffsetY = this.container.querySelector('[name=frame-offset-y]');
+    this.frameMarginX = this.container.querySelector('[name=frame-margin-x]');
+    this.frameMarginY = this.container.querySelector('[name=frame-margin-y]');
 
     this.addEventListener(this.singleImportType, 'change', this.onImportTypeChange_);
     this.addEventListener(this.sheetImportType, 'change', this.onImportTypeChange_);
@@ -40,6 +42,8 @@
     this.addEventListener(this.frameSizeY, 'keyup', this.onFrameInputKeyUp_);
     this.addEventListener(this.frameOffsetX, 'keyup', this.onFrameInputKeyUp_);
     this.addEventListener(this.frameOffsetY, 'keyup', this.onFrameInputKeyUp_);
+    this.addEventListener(this.frameMarginX, 'keyup', this.onFrameInputKeyUp_);
+    this.addEventListener(this.frameMarginY, 'keyup', this.onFrameInputKeyUp_);
 
     pskl.utils.FileUtils.readImageFile(this.file_, this.onImageLoaded_.bind(this));
 
@@ -79,6 +83,8 @@
           this.resizeHeight.value : this.sanitizeInputValue_(this.frameSizeY, 1),
         frameOffsetX: this.sanitizeInputValue_(this.frameOffsetX, 0),
         frameOffsetY: this.sanitizeInputValue_(this.frameOffsetY, 0),
+        frameMarginX: this.sanitizeInputValue_(this.frameMarginX, 0),
+        frameMarginY: this.sanitizeInputValue_(this.frameMarginY, 0),
         smoothing: !!this.smoothResize.checked,
         name: name
       },
@@ -93,11 +99,13 @@
       this.hideFrameGrid_();
     } else {
       // Using spritesheet import, so draw the frame grid in the preview
+      var mx = this.sanitizeInputValue_(this.frameMarginX, 0);
+      var my = this.sanitizeInputValue_(this.frameMarginY, 0);
       var x = this.sanitizeInputValue_(this.frameOffsetX, 0);
       var y = this.sanitizeInputValue_(this.frameOffsetY, 0);
       var w = this.sanitizeInputValue_(this.frameSizeX, 1);
       var h = this.sanitizeInputValue_(this.frameSizeY, 1);
-      this.drawFrameGrid_(x, y, w, h);
+      this.drawFrameGrid_(x, y, w, h, mx, my);
     }
   };
 
@@ -143,12 +151,14 @@
     var frameSizeY = this.sanitizeInputValue_(this.frameSizeY, 1);
     var frameOffsetX = this.sanitizeInputValue_(this.frameOffsetX, 0);
     var frameOffsetY = this.sanitizeInputValue_(this.frameOffsetY, 0);
+    var frameMarginX = this.sanitizeInputValue_(this.frameMarginX, 0);
+    var frameMarginY = this.sanitizeInputValue_(this.frameMarginY, 0);
 
     // Select spritesheet import type since the user changed a value here
     this.sheetImportType.checked = true;
 
     // Draw the grid
-    this.drawFrameGrid_(frameOffsetX, frameOffsetY, frameSizeX, frameSizeY);
+    this.drawFrameGrid_(frameOffsetX, frameOffsetY, frameSizeX, frameSizeY, frameMarginX, frameMarginY);
   };
 
   ns.ImageImport.prototype.sanitizeInputValue_ = function(input, minValue) {
@@ -191,6 +201,8 @@
     this.frameSizeY.value = h;
     this.frameOffsetX.value = 0;
     this.frameOffsetY.value = 0;
+    this.frameMarginX.value = 0;
+    this.frameMarginY.value = 0;
 
     this.importPreview.innerHTML = '';
     this.importPreview.appendChild(this.createImagePreview_());
@@ -214,7 +226,7 @@
     return parts[parts.length - 1];
   };
 
-  ns.ImageImport.prototype.drawFrameGrid_ = function (frameX, frameY, frameW, frameH) {
+  ns.ImageImport.prototype.drawFrameGrid_ = function (offsetX, offsetY, frameW, frameH, marginX = 0, marginY = 0) {
     if (!this.importedImage_) {
       return;
     }
@@ -241,25 +253,22 @@
     context.beginPath();
 
     // Calculate the number of whole frames
-    var countX = Math.floor((width - frameX) / frameW);
-    var countY = Math.floor((height - frameY) / frameH);
+    var frameWM = frameW + marginX;
+    var frameHM = frameH + marginY;
+    var countX = Math.floor((width - offsetX + marginX) / frameWM);
+    var countY = Math.floor((height - offsetY + marginY) / frameHM);
 
     if (countX > 0 && countY > 0) {
       var scaleX = previewWidth / width;
       var scaleY = previewHeight / height;
-      var maxWidth = countX * frameW + frameX;
-      var maxHeight = countY * frameH + frameY;
 
-      // Draw the vertical lines
-      for (var x = frameX + 0.5; x < maxWidth + 1 && x < width + 1; x += frameW) {
-        context.moveTo(x * scaleX, frameY * scaleY);
-        context.lineTo(x * scaleX, maxHeight * scaleY);
-      }
-
-      // Draw the horizontal lines
-      for (var y = frameY + 0.5; y < maxHeight + 1 && y < height + 1; y += frameH) {
-        context.moveTo(frameX * scaleX, y * scaleY);
-        context.lineTo(maxWidth * scaleX, y * scaleY);
+      // Draw the lines
+      for (let i = 0; i < countX; i++) {
+        var x = offsetX + 0.5 + i * frameWM;
+        for (let j = 0; j < countY; j++) {
+          var y = offsetY + 0.5 + j * frameHM;
+          this.drawRectangle_(context, x * scaleX, y * scaleY, frameW * scaleX, frameH * scaleY);
+        }
       }
 
       context.lineWidth = 1;
@@ -271,6 +280,15 @@
     } else {
       this.hideFrameGrid_();
     }
+  };
+
+  ns.ImageImport.prototype.drawRectangle_ = function (context, x, y, width, height) {
+    // clockwise
+    context.moveTo(x, y);
+    context.lineTo(x + width, y);
+    context.lineTo(x + width, y + height);
+    context.lineTo(x, y + height);
+    context.lineTo(x, y);
   };
 
   ns.ImageImport.prototype.hideFrameGrid_ = function() {

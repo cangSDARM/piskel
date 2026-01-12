@@ -14,6 +14,10 @@
   height: 23px;
 }
 
+.textfield[type="number"]::-webkit-inner-spin-button {
+  display: none;
+}
+
 .textfield[readonly="true"] {
   background: transparent;
 }
