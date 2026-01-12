@@ -7,13 +7,13 @@ on:
         description: 'Branch(default main)'
         required: true
         type: string
-        default: 'main'
+        default: 'self-host'
       host-branch:
         description: 'gh-pages branch'
         required: false
         type: string
         default: 'gh-pages'
-  pull_request:
+  push:
 
 permissions:
   contents: write
