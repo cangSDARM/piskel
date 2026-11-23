@@ -33567,15 +33567,21 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 				x: event.clientX,
 				y: event.clientY
 			};
-			const files = assertInitialized(event.dataTransfer, "dataTransfer").files;
+			const files = Array.from(assertInitialized(event.dataTransfer, "dataTransfer").files);
 			this.isMultipleFiles_ = files.length > 1;
+			const loadedOrder = [];
+			const lastFrameIndex = this.piskelController.getCurrentFrameIndex();
 			for (let i = 0; i < files.length; i++) {
 				const file = files[i];
 				const isImage = file.type.indexOf("image") === 0;
 				const isPiskel = /\.piskel$/i.test(file.name);
 				const isPalette = /\.(gpl|txt|pal)$/i.test(file.name);
 				if (isImage) FileUtils.readImageFile(file, (image) => {
+					loadedOrder.push(i);
 					this.onImageLoaded_(image, file);
+					if (loadedOrder.length === files.length) {
+						if (this.isMultipleFiles_) this.resortImportOrders_(lastFrameIndex, loadedOrder);
+					}
 				});
 				else if (isPiskel) PiskelFileUtils.loadFromFile(file, this.onPiskelFileLoaded_, this.onPiskelFileError_);
 				else if (isPalette) assertInitialized(app.paletteImportService, "paletteImportService").read(file, this.onPaletteLoaded_.bind(this));
@@ -33611,6 +33617,29 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			FrameUtils.addImageToFrame(currentFrame, importedImage, x, y);
 			$.publish(Events.PISKEL_RESET);
 			$.publish(Events.PISKEL_SAVE_STATE, { type: HistoryService.SNAPSHOT });
+		}
+		/**
+		* Resort imported images to the dragged order
+		* 
+		* @param {number} startIndex ordered index
+		* @param {number[]} order insert order. start from 0
+		*/
+		resortImportOrders_(startIndex, order) {
+			const indexedOrder = order.map((o) => o + startIndex + 1);
+			const sorted = [...indexedOrder].sort((a, b) => a - b);
+			let currentPositions = /* @__PURE__ */ new Map();
+			for (let i = 0; i < indexedOrder.length; i++) currentPositions.set(indexedOrder[i], startIndex + 1 + i);
+			for (let targetIdx = 0; targetIdx < sorted.length; targetIdx++) {
+				const targetValue = sorted[targetIdx];
+				const targetAbsolutePos = startIndex + 1 + targetIdx;
+				const currentPos = currentPositions.get(targetValue);
+				if (currentPos === targetAbsolutePos) continue;
+				this.piskelController.moveFrame(currentPos, targetAbsolutePos);
+				if (currentPos < targetAbsolutePos) {
+					for (let [value, pos] of currentPositions) if (pos > currentPos && pos <= targetAbsolutePos) currentPositions.set(value, pos - 1);
+				} else for (let [value, pos] of currentPositions) if (pos >= targetAbsolutePos && pos < currentPos) currentPositions.set(value, pos + 1);
+				currentPositions.set(targetValue, targetAbsolutePos);
+			}
 		}
 	};
 	//#endregion
