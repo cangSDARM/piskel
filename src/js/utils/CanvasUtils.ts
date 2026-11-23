@@ -43,9 +43,12 @@ export const CanvasUtils = {
    * @param {Number} offsetY The padding from the top side of the source image
    * @param {Number} width The width of an individual frame
    * @param {Number} height The height of an individual frame
-   * @param {Boolean} useHorizonalStrips True if the frames should be layed out from left to
+   * @param {Number} marginX The margin width between each individual frames
+   * @param {Number} marginY The margin height between each individual frames
+   * @param {object} options
+   * @param {Boolean} options.useHorizontalStrips True if the frames should be layed out from left to
    * right, False if it should use top to bottom
-   * @param {Boolean} ignoreEmptyFrames True to ignore empty frames, false to keep them
+   * @param {Boolean} options.ignoreEmptyFrames True to ignore empty frames, false to keep them
    * @returns {Array} An array of canvas elements that contain the split frames
    */
   createFramesFromImage(
@@ -54,13 +57,19 @@ export const CanvasUtils = {
     offsetY: number,
     width: number,
     height: number,
-    useHorizonalStrips: boolean,
-    ignoreEmptyFrames: boolean
+    marginX: number,
+    marginY: number,
+    options: {
+      useHorizontalStrips: boolean,
+      ignoreEmptyFrames: boolean,
+    }
   ): HTMLCanvasElement[] {
     const canvasArray = [];
     let x = offsetX;
     let y = offsetY;
     const blankData = CanvasUtils.createCanvas(width, height).toDataURL();
+    const useHorizontalStrips = options.useHorizontalStrips;
+    const ignoreEmptyFrames = options.ignoreEmptyFrames;
 
     while (x + width <= image.width && y + height <= image.height) {
       // Create a new canvas element
@@ -74,18 +83,22 @@ export const CanvasUtils = {
         canvasArray.push(canvas);
       }
 
-      if (useHorizonalStrips) {
+      if (useHorizontalStrips) {
         // Move from left to right
         x += width;
+        x += marginX;
         if (x + width > image.width) {
           x = offsetX;
           y += height;
+          y += marginY;
         }
       } else {
         // Move from top to bottom
         y += height;
+        y += marginY;
         if (y + height > image.height) {
           x += width;
+          x += marginX;
           y = offsetY;
         }
       }

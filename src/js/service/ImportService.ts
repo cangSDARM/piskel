@@ -25,6 +25,8 @@ export type ImportOptions = {
   frameSizeY: number;
   frameOffsetX: number;
   frameOffsetY: number;
+  frameMarginX?: number;
+  frameMarginY?: number;
 };
 
 export class ImportService {
@@ -84,6 +86,8 @@ export class ImportService {
     const frameSizeY = options.frameSizeY;
     const frameOffsetX = options.frameOffsetX;
     const frameOffsetY = options.frameOffsetY;
+    const frameMarginX = options.frameMarginX || 0;
+    const frameMarginY = options.frameMarginY || 0;
 
     const gifLoader = new window.SuperGif({
       gif: image as HTMLImageElement
@@ -114,7 +118,9 @@ export class ImportService {
             frameSizeX,
             frameSizeY,
             frameOffsetX,
-            frameOffsetY
+            frameOffsetY,
+            frameMarginX,
+            frameMarginY
           );
           piskel = this.createPiskelFromImages_(
             frameImages,
@@ -144,7 +150,9 @@ export class ImportService {
             frameSizeX,
             frameSizeY,
             frameOffsetX,
-            frameOffsetY
+            frameOffsetY,
+            frameMarginX,
+            frameMarginY
           );
           piskel = this.createPiskelFromImages_(
             frameImages,
@@ -173,7 +181,9 @@ export class ImportService {
     frameSizeX: number,
     frameSizeY: number,
     frameOffsetX: number,
-    frameOffsetY: number
+    frameOffsetY: number,
+    frameMarginX = 0,
+    frameMarginY = 0
   ): HTMLCanvasElement[] {
     return CanvasUtils.createFramesFromImage(
       image,
@@ -181,8 +191,12 @@ export class ImportService {
       frameOffsetY,
       frameSizeX,
       frameSizeY,
-      /*useHorizonalStrips=*/ true,
-      /*ignoreEmptyFrames=*/ true
+      frameMarginX,
+      frameMarginY,
+      {
+        useHorizontalStrips: true,
+        ignoreEmptyFrames: true,
+      }
     );
   }
 

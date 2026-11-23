@@ -22,6 +22,8 @@ export class ImageImport extends AbstractImportStep {
   frameSizeY: HTMLInputElement | undefined;
   frameOffsetX: HTMLInputElement | undefined;
   frameOffsetY: HTMLInputElement | undefined;
+  frameMarginX: HTMLInputElement | undefined;
+  frameMarginY: HTMLInputElement | undefined;
 
   constructor(
     piskelController: PublicPiskelController,
@@ -85,6 +87,14 @@ export class ImageImport extends AbstractImportStep {
       "[name=frame-offset-y]",
       this.container
     );
+    this.frameMarginX = Dom.getElement<HTMLInputElement>(
+      "[name=frame-margin-x]",
+      this.container
+    );
+    this.frameMarginY = Dom.getElement<HTMLInputElement>(
+      "[name=frame-margin-y]",
+      this.container
+    );
 
     this.addEventListener(
       assertInitialized(this.singleImportType, "singleImportType"),
@@ -103,6 +113,8 @@ export class ImageImport extends AbstractImportStep {
     this.addEventListener(this.frameSizeY, "keyup", this.onFrameInputKeyUp_);
     this.addEventListener(this.frameOffsetX, "keyup", this.onFrameInputKeyUp_);
     this.addEventListener(this.frameOffsetY, "keyup", this.onFrameInputKeyUp_);
+    this.addEventListener(this.frameMarginX, 'keyup', this.onFrameInputKeyUp_);
+    this.addEventListener(this.frameMarginY, 'keyup', this.onFrameInputKeyUp_);
 
     FileUtils.readImageFile(
       assertInitialized(this.file_, "file_"),
@@ -155,6 +167,8 @@ export class ImageImport extends AbstractImportStep {
               : this.sanitizeInputValue_(this.frameSizeY, 1),
           frameOffsetX: this.sanitizeInputValue_(this.frameOffsetX, 0),
           frameOffsetY: this.sanitizeInputValue_(this.frameOffsetY, 0),
+          frameMarginX: this.sanitizeInputValue_(this.frameMarginX, 0),
+          frameMarginY: this.sanitizeInputValue_(this.frameMarginY, 0),
           smoothing: !!assertInitialized(this.smoothResize, "smoothResize")
             .checked,
           name: name
@@ -169,12 +183,14 @@ export class ImageImport extends AbstractImportStep {
       // Using single image, so remove the frame grid
       this.hideFrameGrid_();
     } else {
+      const mx = this.sanitizeInputValue_(this.frameMarginX, 0);
+      const my = this.sanitizeInputValue_(this.frameMarginY, 0);
       // Using spritesheet import, so draw the frame grid in the preview
       const x = this.sanitizeInputValue_(this.frameOffsetX, 0);
       const y = this.sanitizeInputValue_(this.frameOffsetY, 0);
       const w = this.sanitizeInputValue_(this.frameSizeX, 1);
       const h = this.sanitizeInputValue_(this.frameSizeY, 1);
-      this.drawFrameGrid_(x, y, w, h);
+      this.drawFrameGrid_(x, y, w, h, mx, my);
     }
   }
 
@@ -233,12 +249,14 @@ export class ImageImport extends AbstractImportStep {
     const frameSizeY = this.sanitizeInputValue_(this.frameSizeY, 1);
     const frameOffsetX = this.sanitizeInputValue_(this.frameOffsetX, 0);
     const frameOffsetY = this.sanitizeInputValue_(this.frameOffsetY, 0);
+    const frameMarginX = this.sanitizeInputValue_(this.frameMarginX, 0);
+    const frameMarginY = this.sanitizeInputValue_(this.frameMarginY, 0);
 
     // Select spritesheet import type since the user changed a value here
     assertInitialized(this.sheetImportType, "sheetImportType").checked = true;
 
     // Draw the grid
-    this.drawFrameGrid_(frameOffsetX, frameOffsetY, frameSizeX, frameSizeY);
+    this.drawFrameGrid_(frameOffsetX, frameOffsetY, frameSizeX, frameSizeY, frameMarginX, frameMarginY);
   }
 
   sanitizeInputValue_(
@@ -293,6 +311,8 @@ export class ImageImport extends AbstractImportStep {
     assertInitialized(this.frameSizeY, "frameSizeY").value = String(h);
     assertInitialized(this.frameOffsetX, "frameOffsetX").value = String(0);
     assertInitialized(this.frameOffsetY, "frameOffsetY").value = String(0);
+    assertInitialized(this.frameMarginX, "frameMarginX").value = String(0);
+    assertInitialized(this.frameMarginY, "frameMarginY").value = String(0);
 
     assertInitialized(this.importPreview, "importPreview").innerHTML = "";
     assertInitialized(this.importPreview, "importPreview").appendChild(
@@ -327,7 +347,9 @@ export class ImageImport extends AbstractImportStep {
     frameX: number,
     frameY: number,
     frameW: number,
-    frameH: number
+    frameH: number,
+    marginX = 0,
+    marginY = 0
   ): void {
     if (!this.importedImage_) {
       return;
@@ -358,8 +380,10 @@ export class ImageImport extends AbstractImportStep {
     context.beginPath();
 
     // Calculate the number of whole frames
-    const countX = Math.floor((width - frameX) / frameW);
-    const countY = Math.floor((height - frameY) / frameH);
+    const frameWM = frameW + marginX;
+    const frameHM = frameH + marginY;
+    const countX = Math.floor((width - frameX + marginX) / frameWM);
+    const countY = Math.floor((height - frameY + marginY) / frameHM);
 
     if (countX > 0 && countY > 0) {
       const scaleX = previewWidth / width;
@@ -367,24 +391,13 @@ export class ImageImport extends AbstractImportStep {
       const maxWidth = countX * frameW + frameX;
       const maxHeight = countY * frameH + frameY;
 
-      // Draw the vertical lines
-      for (
-        let x = frameX + 0.5;
-        x < maxWidth + 1 && x < width + 1;
-        x += frameW
-      ) {
-        context.moveTo(x * scaleX, frameY * scaleY);
-        context.lineTo(x * scaleX, maxHeight * scaleY);
-      }
-
-      // Draw the horizontal lines
-      for (
-        let y = frameY + 0.5;
-        y < maxHeight + 1 && y < height + 1;
-        y += frameH
-      ) {
-        context.moveTo(frameX * scaleX, y * scaleY);
-        context.lineTo(maxWidth * scaleX, y * scaleY);
+      // Draw the lines
+      for (let i = 0; i < countX; i++) {
+        var x = frameX + 0.5 + i * frameWM;
+        for (let j = 0; j < countY; j++) {
+          var y = frameY + 0.5 + j * frameHM;
+          this.drawRectangle_(context, x * scaleX, y * scaleY, frameW * scaleX, frameH * scaleY);
+        }
       }
 
       context.lineWidth = 1;
@@ -397,6 +410,21 @@ export class ImageImport extends AbstractImportStep {
       this.hideFrameGrid_();
     }
   }
+
+  drawRectangle_(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): void {
+    // clockwise
+    context.moveTo(x, y);
+    context.lineTo(x + width, y);
+    context.lineTo(x + width, y + height);
+    context.lineTo(x, y + height);
+    context.lineTo(x, y);
+  };
 
   hideFrameGrid_(): void {
     const canvas = assertInitialized(
