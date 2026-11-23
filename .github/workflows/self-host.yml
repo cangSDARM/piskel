@@ -28,7 +28,7 @@ jobs:
         run: npm --proxy=null --https_proxy=null --strict-ssl=true install
 
       - name: Build
-        run: ./node_modules/.bin/grunt build
+        run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
