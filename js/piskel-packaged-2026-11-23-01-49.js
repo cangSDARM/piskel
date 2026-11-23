@@ -23169,25 +23169,31 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			Dom.getContext2d(canvas).drawImage(image, 0, 0);
 			return canvas;
 		},
-		createFramesFromImage(image, offsetX, offsetY, width, height, useHorizonalStrips, ignoreEmptyFrames) {
+		createFramesFromImage(image, offsetX, offsetY, width, height, marginX, marginY, options) {
 			const canvasArray = [];
 			let x = offsetX;
 			let y = offsetY;
 			const blankData = CanvasUtils.createCanvas(width, height).toDataURL();
+			const useHorizontalStrips = options.useHorizontalStrips;
+			const ignoreEmptyFrames = options.ignoreEmptyFrames;
 			while (x + width <= image.width && y + height <= image.height) {
 				const canvas = CanvasUtils.createCanvas(width, height);
 				Dom.getContext2d(canvas).drawImage(image, x, y, width, height, 0, 0, width, height);
 				if (!ignoreEmptyFrames || canvas.toDataURL() !== blankData) canvasArray.push(canvas);
-				if (useHorizonalStrips) {
+				if (useHorizontalStrips) {
 					x += width;
+					x += marginX;
 					if (x + width > image.width) {
 						x = offsetX;
 						y += height;
+						y += marginY;
 					}
 				} else {
 					y += height;
+					y += marginY;
 					if (y + height > image.height) {
 						x += width;
+						x += marginX;
 						y = offsetY;
 					}
 				}
@@ -30093,6 +30099,8 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			this.frameSizeY = Dom.getElement("[name=frame-size-y]", this.container);
 			this.frameOffsetX = Dom.getElement("[name=frame-offset-x]", this.container);
 			this.frameOffsetY = Dom.getElement("[name=frame-offset-y]", this.container);
+			this.frameMarginX = Dom.getElement("[name=frame-margin-x]", this.container);
+			this.frameMarginY = Dom.getElement("[name=frame-margin-y]", this.container);
 			this.addEventListener(assertInitialized(this.singleImportType, "singleImportType"), "change", this.onImportTypeChange_);
 			this.addEventListener(assertInitialized(this.sheetImportType, "sheetImportType"), "change", this.onImportTypeChange_);
 			this.addEventListener(this.resizeWidth, "keyup", this.onResizeInputKeyUp_);
@@ -30101,6 +30109,8 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			this.addEventListener(this.frameSizeY, "keyup", this.onFrameInputKeyUp_);
 			this.addEventListener(this.frameOffsetX, "keyup", this.onFrameInputKeyUp_);
 			this.addEventListener(this.frameOffsetY, "keyup", this.onFrameInputKeyUp_);
+			this.addEventListener(this.frameMarginX, "keyup", this.onFrameInputKeyUp_);
+			this.addEventListener(this.frameMarginY, "keyup", this.onFrameInputKeyUp_);
 			FileUtils.readImageFile(assertInitialized(this.file_, "file_"), this.onImageLoaded_.bind(this));
 			if (this.piskelController.isEmpty()) assertInitialized(this.nextButton, "nextButton").textContent = "import";
 		}
@@ -30127,6 +30137,8 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 					frameSizeY: this.getImportType_() === "single" ? Number(assertInitialized(this.resizeHeight, "resizeHeight").value) : this.sanitizeInputValue_(this.frameSizeY, 1),
 					frameOffsetX: this.sanitizeInputValue_(this.frameOffsetX, 0),
 					frameOffsetY: this.sanitizeInputValue_(this.frameOffsetY, 0),
+					frameMarginX: this.sanitizeInputValue_(this.frameMarginX, 0),
+					frameMarginY: this.sanitizeInputValue_(this.frameMarginY, 0),
 					smoothing: !!assertInitialized(this.smoothResize, "smoothResize").checked,
 					name
 				}, resolve);
@@ -30135,11 +30147,13 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 		onImportTypeChange_() {
 			if (this.getImportType_() === "single") this.hideFrameGrid_();
 			else {
+				const mx = this.sanitizeInputValue_(this.frameMarginX, 0);
+				const my = this.sanitizeInputValue_(this.frameMarginY, 0);
 				const x = this.sanitizeInputValue_(this.frameOffsetX, 0);
 				const y = this.sanitizeInputValue_(this.frameOffsetY, 0);
 				const w = this.sanitizeInputValue_(this.frameSizeX, 1);
 				const h = this.sanitizeInputValue_(this.frameSizeY, 1);
-				this.drawFrameGrid_(x, y, w, h);
+				this.drawFrameGrid_(x, y, w, h, mx, my);
 			}
 		}
 		onResizeInputKeyUp_(evt) {
@@ -30165,8 +30179,10 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			const frameSizeY = this.sanitizeInputValue_(this.frameSizeY, 1);
 			const frameOffsetX = this.sanitizeInputValue_(this.frameOffsetX, 0);
 			const frameOffsetY = this.sanitizeInputValue_(this.frameOffsetY, 0);
+			const frameMarginX = this.sanitizeInputValue_(this.frameMarginX, 0);
+			const frameMarginY = this.sanitizeInputValue_(this.frameMarginY, 0);
 			assertInitialized(this.sheetImportType, "sheetImportType").checked = true;
-			this.drawFrameGrid_(frameOffsetX, frameOffsetY, frameSizeX, frameSizeY);
+			this.drawFrameGrid_(frameOffsetX, frameOffsetY, frameSizeX, frameSizeY, frameMarginX, frameMarginY);
 		}
 		sanitizeInputValue_(maybeInput, minValue) {
 			const input = assertInitialized(maybeInput, "input");
@@ -30196,6 +30212,8 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			assertInitialized(this.frameSizeY, "frameSizeY").value = String(h);
 			assertInitialized(this.frameOffsetX, "frameOffsetX").value = String(0);
 			assertInitialized(this.frameOffsetY, "frameOffsetY").value = String(0);
+			assertInitialized(this.frameMarginX, "frameMarginX").value = String(0);
+			assertInitialized(this.frameMarginY, "frameMarginY").value = String(0);
 			assertInitialized(this.importPreview, "importPreview").innerHTML = "";
 			assertInitialized(this.importPreview, "importPreview").appendChild(this.createImagePreview_());
 		}
@@ -30211,7 +30229,7 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			else parts = [path];
 			return parts[parts.length - 1];
 		}
-		drawFrameGrid_(frameX, frameY, frameW, frameH) {
+		drawFrameGrid_(frameX, frameY, frameW, frameH, marginX = 0, marginY = 0) {
 			if (!this.importedImage_) return;
 			const width = this.importedImage_.width;
 			const height = this.importedImage_.height;
@@ -30226,26 +30244,34 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			const context = Dom.getContext2d(canvas);
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			context.beginPath();
-			const countX = Math.floor((width - frameX) / frameW);
-			const countY = Math.floor((height - frameY) / frameH);
+			const frameWM = frameW + marginX;
+			const frameHM = frameH + marginY;
+			const countX = Math.floor((width - frameX + marginX) / frameWM);
+			const countY = Math.floor((height - frameY + marginY) / frameHM);
 			if (countX > 0 && countY > 0) {
 				const scaleX = previewWidth / width;
 				const scaleY = previewHeight / height;
-				const maxWidth = countX * frameW + frameX;
-				const maxHeight = countY * frameH + frameY;
-				for (let x = frameX + .5; x < maxWidth + 1 && x < width + 1; x += frameW) {
-					context.moveTo(x * scaleX, frameY * scaleY);
-					context.lineTo(x * scaleX, maxHeight * scaleY);
-				}
-				for (let y = frameY + .5; y < maxHeight + 1 && y < height + 1; y += frameH) {
-					context.moveTo(frameX * scaleX, y * scaleY);
-					context.lineTo(maxWidth * scaleX, y * scaleY);
+				countX * frameW + frameX;
+				countY * frameH + frameY;
+				for (let i = 0; i < countX; i++) {
+					var x = frameX + .5 + i * frameWM;
+					for (let j = 0; j < countY; j++) {
+						var y = frameY + .5 + j * frameHM;
+						this.drawRectangle_(context, x * scaleX, y * scaleY, frameW * scaleX, frameH * scaleY);
+					}
 				}
 				context.lineWidth = 1;
 				context.strokeStyle = "gold";
 				context.stroke();
 				canvas.style.display = "block";
 			} else this.hideFrameGrid_();
+		}
+		drawRectangle_(context, x, y, width, height) {
+			context.moveTo(x, y);
+			context.lineTo(x + width, y);
+			context.lineTo(x + width, y + height);
+			context.lineTo(x, y + height);
+			context.lineTo(x, y);
 		}
 		hideFrameGrid_() {
 			const canvas = assertInitialized(this.importPreview, "importPreview").querySelector("canvas");
@@ -33632,6 +33658,8 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 			const frameSizeY = options.frameSizeY;
 			const frameOffsetX = options.frameOffsetX;
 			const frameOffsetY = options.frameOffsetY;
+			const frameMarginX = options.frameMarginX || 0;
+			const frameMarginY = options.frameMarginY || 0;
 			const gifLoader = new window.SuperGif({ gif: image });
 			gifLoader.load({
 				success: () => {
@@ -33641,7 +33669,7 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 					let piskel;
 					if (importType === "single" || images.length > 1) piskel = this.createPiskelFromImages_(images, name, frameSizeX, frameSizeY, smoothing);
 					else {
-						const frameImages = this.createImagesFromSheet_(images[0], frameSizeX, frameSizeY, frameOffsetX, frameOffsetY);
+						const frameImages = this.createImagesFromSheet_(images[0], frameSizeX, frameSizeY, frameOffsetX, frameOffsetY, frameMarginX, frameMarginY);
 						piskel = this.createPiskelFromImages_(frameImages, name, frameSizeX, frameSizeY, smoothing);
 					}
 					onComplete(piskel);
@@ -33650,7 +33678,7 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 					let piskel;
 					if (importType === "single") piskel = this.createPiskelFromImages_([image], name, frameSizeX, frameSizeY, smoothing);
 					else {
-						const frameImages = this.createImagesFromSheet_(image, frameSizeX, frameSizeY, frameOffsetX, frameOffsetY);
+						const frameImages = this.createImagesFromSheet_(image, frameSizeX, frameSizeY, frameOffsetX, frameOffsetY, frameMarginX, frameMarginY);
 						piskel = this.createPiskelFromImages_(frameImages, name, frameSizeX, frameSizeY, smoothing);
 					}
 					onComplete(piskel);
@@ -33666,8 +33694,11 @@ zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License
 		* @returns {canvas[]}
 		* @private
 		*/
-		createImagesFromSheet_(image, frameSizeX, frameSizeY, frameOffsetX, frameOffsetY) {
-			return CanvasUtils.createFramesFromImage(image, frameOffsetX, frameOffsetY, frameSizeX, frameSizeY, true, true);
+		createImagesFromSheet_(image, frameSizeX, frameSizeY, frameOffsetX, frameOffsetY, frameMarginX = 0, frameMarginY = 0) {
+			return CanvasUtils.createFramesFromImage(image, frameOffsetX, frameOffsetY, frameSizeX, frameSizeY, frameMarginX, frameMarginY, {
+				useHorizontalStrips: true,
+				ignoreEmptyFrames: true
+			});
 		}
 		/**
 		* @param {canvas[]} images
