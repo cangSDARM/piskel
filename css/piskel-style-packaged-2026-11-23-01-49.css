@@ -2110,11 +2110,11 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
   padding: 5px;
 }
 #dialog-container.import {
-  width: 500px;
-  height: 350px;
-  top: 50%;
-  left: 50%;
-  position: absolute;
+  width: 575px;
+  height: 405px;
+  top : 50%;
+  left : 50%;
+  position : absolute;
   margin-left: -250px;
   margin-top: -175px;
 }
