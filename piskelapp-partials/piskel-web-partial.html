@@ -7,23 +7,52 @@ layout: "editorLayout.html"
   <div class="sticky-section left-sticky-section" id="tool-section">
 <div class="sticky-section-wrap">
   <div class="vertical-centerer">
-    <div class="pen-size-container size-picker-container" title="Pen size<br/>from 1 to 4 pixels" rel="tooltip" data-placement="top">
-      <div class="pen-size-option size-picker-option" data-size="1"></div>
-      <div class="pen-size-option size-picker-option" data-size="2"></div>
-      <div class="pen-size-option size-picker-option" data-size="3"></div>
-      <div class="pen-size-option size-picker-option" data-size="4"></div>
+    <div
+      class="pen-size-container size-picker-container"
+      title="Pen size<br/>from 1 to 4 pixels"
+      rel="tooltip"
+      data-placement="top"
+      data-test-id="pen-size-picker"
+    >
+      <div
+        class="pen-size-option size-picker-option"
+        data-size="1"
+        data-test-id="pen-size-1"
+      ></div>
+      <div
+        class="pen-size-option size-picker-option"
+        data-size="2"
+        data-test-id="pen-size-2"
+      ></div>
+      <div
+        class="pen-size-option size-picker-option"
+        data-size="3"
+        data-test-id="pen-size-3"
+      ></div>
+      <div
+        class="pen-size-option size-picker-option"
+        data-size="4"
+        data-test-id="pen-size-4"
+      ></div>
     </div>
-    <ul id="tools-container" class="tools-wrapper">
-      <!-- Drawing tools will be inserted here -->
-    </ul>
-    <div class="palette-wrapper">
+    <ul
+      id="tools-container"
+      class="tools-wrapper"
+      data-test-id="tools-container"
+    ><!-- Drawing tools will be inserted here --></ul>
+    <div class="palette-wrapper" data-test-id="current-colors">
       <div
         class="tool-icon tool-color-picker"
         data-initial-title="Primary - left mouse button"
         rel="tooltip"
         data-placement="right"
       >
-        <input id="color-picker" class="color" type="text"/>
+        <input
+          id="color-picker"
+          class="color"
+          type="text"
+          data-test-id="primary-color-picker"
+        >
       </div>
       <div
         class="tool-icon tool-color-picker"
@@ -31,10 +60,16 @@ layout: "editorLayout.html"
         rel="tooltip"
         data-placement="right"
       >
-        <input id="secondary-color-picker" class="secondary-color-picker color" type="text" />
+        <input
+          id="secondary-color-picker"
+          class="secondary-color-picker color"
+          type="text"
+          data-test-id="secondary-color-picker"
+        >
       </div>
       <div
         class="swap-colors-button icon-common-swapcolors-arrow-grey"
+        data-test-id="swap-colors-button"
         title="Swap colors (X)"
         rel="tooltip"
         data-placement="right"
@@ -47,42 +82,84 @@ layout: "editorLayout.html"
 
 <!-- Drawing tool icon-button -->
 <script type="text/template" id="drawingTool-item-template">
-  <li rel="tooltip" data-placement="{{tooltipposition}}" class="{{cssclass}}" data-tool-id="{{toolid}}" title="{{title}}"></li>
+  <li rel="tooltip" data-placement="{{tooltipposition}}" class="{{cssclass}}" data-tool-id="{{toolid}}" data-test-id="tool-{{toolid}}" title="{{title}}"></li>
 </script>
 </div>
 
 
   <div id="column-wrapper" class="column-wrapper">
     <div class='column left-column'>
-      <div id="preview-list-wrapper" class="preview-list-wrapper">
+      <div
+id="preview-list-wrapper"
+class="preview-list-wrapper"
+data-test-id="frame-list"
+>
 <div id="preview-list-scroller" class="preview-list-scroller">
   <ul class="preview-list" id="preview-list"></ul>
 </div>
-<div class="top-overflow"></div>
-<div class="bottom-overflow"></div>
+<div class="top-overflow" data-test-id="frame-list-top-hint"></div>
+<div class="bottom-overflow" data-test-id="frame-list-bottom-hint"></div>
 </div>
+
     </div>
 
     <div class='column main-column'>
-      <div id="drawing-canvas-container" class="drawing-canvas-container canvas-container">
+      <div id="drawing-canvas-container" class="drawing-canvas-container canvas-container" data-test-id="drawing-canvas">
         <div class="canvas-background"></div>
       </div>
     </div>
 
     <div class="column right-column">
-      <div id="animated-preview-container" class="preview-container">
+      <div
+id="animated-preview-container"
+class="preview-container"
+data-test-id="preview-panel"
+>
 <div class="canvas-container-wrapper minimap-container">
   <div class="preview-contextual-actions">
-    <div class="preview-drop-down">
-      <div class="preview-disable-overlay" rel="tooltip" data-placement="left"></div>
-      <div class="preview-contextual-action  original-size-button" rel="tooltip" data-placement="left">1x</div>
-      <div class="preview-contextual-action  best-size-button" rel="tooltip" data-placement="left"></div>
-      <div class="preview-contextual-action  full-size-button" rel="tooltip" data-placement="left">Full</div>
+    <div class="preview-drop-down" data-test-id="preview-drop-down">
+      <div
+        class="preview-disable-overlay"
+        rel="tooltip"
+        data-placement="left"
+      ></div>
+      <div
+        class="preview-contextual-action  original-size-button"
+        rel="tooltip"
+        data-placement="left"
+        data-test-id="preview-size-1x"
+      >
+        1x
+      </div>
+      <div
+        class="preview-contextual-action  best-size-button"
+        rel="tooltip"
+        data-placement="left"
+        data-test-id="preview-size-best"
+      ></div>
+      <div
+        class="preview-contextual-action  full-size-button"
+        rel="tooltip"
+        data-placement="left"
+        data-test-id="preview-size-full"
+      >
+        Full
+      </div>
     </div>
-    <div class="preview-contextual-action  toggle-grid-button  icon-minimap-grid-white"
-      title="Toggle grid" rel="tooltip" data-placement="bottom"></div>
-    <div class="preview-contextual-action  open-popup-preview-button  icon-minimap-popup-preview-arrow-white"
-         title="Open preview in popup" rel="tooltip" data-placement="bottom"></div>
+    <div
+      class="preview-contextual-action  toggle-grid-button  icon-minimap-grid-white"
+      title="Toggle grid"
+      rel="tooltip"
+      data-placement="bottom"
+      data-test-id="grid-toggle-button"
+    ></div>
+    <div
+      class="preview-contextual-action  open-popup-preview-button  icon-minimap-popup-preview-arrow-white"
+      title="Open preview in popup"
+      rel="tooltip"
+      data-placement="bottom"
+      data-test-id="open-popup-preview-button"
+    ></div>
   </div>
 
   <div id="animated-preview-canvas-container" class="canvas-container">
@@ -90,87 +167,153 @@ layout: "editorLayout.html"
   </div>
 </div>
 <div>
-  <div rel="tooltip"
-       data-placement="bottom"
-       class="piskel-icon-onion preview-toggle-onion-skin"></div>
-  <span id="display-fps" class="display-fps"></span>
-  <input id="preview-fps" class="range-fps" type="range" min="0" max="24"/>
+  <div
+    rel="tooltip"
+    data-placement="bottom"
+    class="piskel-icon-onion preview-toggle-onion-skin"
+    data-test-id="onion-skin-toggle-button"
+  ></div>
+  <span
+    id="display-fps"
+    class="display-fps"
+    data-test-id="fps-display"
+  ></span>
+  <input
+    id="preview-fps"
+    class="range-fps"
+    type="range"
+    min="0"
+    max="24"
+    data-test-id="fps-slider"
+  >
 </div>
-<div>
+<div></div>
 </div>
-</div>
-      <div class="toolbox-container layers-list-container">
-<h3 class="toolbox-title layers-title">Layers
-  <div rel="tooltip"
-       data-placement="left"
-       class="layers-toggle-preview piskel-icon-eye"></div>
+
+      <div class="toolbox-container layers-list-container" data-test-id="layer-list">
+<h3 class="toolbox-title layers-title">
+  Layers
+  <div
+    rel="tooltip"
+    data-placement="left"
+    class="layers-toggle-preview piskel-icon-eye"
+    data-test-id="layer-preview-toggle"
+  ></div>
 </h3>
 <div class="toolbox-buttons">
-  <button data-action="add"
+  <button
+    data-action="add"
+    data-test-id="layer-add-button"
     class="button layers-button piskel-icon-plus"
-    rel="tooltip" data-placement="top" ></button>
+    rel="tooltip"
+    data-placement="top"
+  ></button>
 
-  <button data-action="up"
+  <button
+    data-action="up"
+    data-test-id="layer-move-up-button"
     class="button layers-button piskel-icon-arrow-up-fat"
-    title="Move layer up" rel="tooltip" data-placement="top" ></button>
+    title="Move layer up"
+    rel="tooltip"
+    data-placement="top"
+  ></button>
 
-  <button data-action="down"
+  <button
+    data-action="down"
+    data-test-id="layer-move-down-button"
     class="button layers-button piskel-icon-arrow-down-fat"
-    title="Move layer down" rel="tooltip" data-placement="top" ></button>
+    title="Move layer down"
+    rel="tooltip"
+    data-placement="top"
+  ></button>
 
-  <button data-action="edit"
+  <button
+    data-action="edit"
+    data-test-id="layer-edit-button"
     class="button layers-button piskel-icon-pencil"
-    title="Edit layer name" rel="tooltip" data-placement="top"></button>
+    title="Edit layer name"
+    rel="tooltip"
+    data-placement="top"
+  ></button>
 
-  <button data-action="merge"
+  <button
+    data-action="merge"
+    data-test-id="layer-merge-button"
     class="button layers-button piskel-icon-merge"
-    title="Merge with layer below" rel="tooltip" data-placement="top" ></button>
+    title="Merge with layer below"
+    rel="tooltip"
+    data-placement="top"
+  ></button>
 
-  <button data-action="delete"
+  <button
+    data-action="delete"
+    data-test-id="layer-delete-button"
     class="button layers-button piskel-icon-close"
-    title="Delete selected layer" rel="tooltip" data-placement="top" ></button>
-
+    title="Delete selected layer"
+    rel="tooltip"
+    data-placement="top"
+  ></button>
 </div>
 
-<ul class="layers-list"></ul>
+<ul class="layers-list" data-test-id="layers-list-items"></ul>
 
 <script type="text/template" id="layer-item-template">
   <li class="layer-item {{isselected:current-layer-item}}"
-      data-layer-index="{{layerindex}}">
-      <span class="layer-name" data-placement="top">{{layername}}</span>
-      <span class="layer-item-opacity"
+      data-layer-index="{{layerindex}}" data-test-id="layer-item">
+      <span class="layer-name" data-placement="top" data-test-id="layer-name">{{layername}}</span>
+      <span class="layer-item-opacity" data-test-id="layer-opacity"
             title="Layer opacity ({{opacity}})" rel="tooltip" data-placement="top">
           &#945;
       </span>
   </li>
 </script>
-  
+
 <script type="text/template" id="layer-name-input-template">
-  <input class="textfield layer-name-input" type="text" autocomplete="off" value="{{layername}}" />
+  <input class="textfield layer-name-input" type="text" autocomplete="off" value="{{layername}}" data-test-id="layer-name-input" />
 </script>
 </div>
 
-      <div class="toolbox-container transformations-container">
+      <div
+class="toolbox-container transformations-container"
+data-test-id="transformations-panel"
+>
 <h3 class="toolbox-title transformations-title">
   Transform
   <span
     class="transformations-show-more-link piskel-icon-plus"
     title="View more tools"
-    rel="tooltip" data-placement="top"
+    rel="tooltip"
+    data-placement="top"
   ></span>
 </h3>
 <ul class="tools-wrapper"></ul>
 </div>
-      <div class="toolbox-container palettes-list-container">
+
+      <div
+class="toolbox-container palettes-list-container"
+data-test-id="palettes-panel"
+>
 <h3 class="toolbox-title palettes-title">Palettes</h3>
 <div class="toolbox-buttons">
   <button
-    class="button palettes-list-button create-palette-button piskel-icon-plus" data-action="add"
-    title="Create a new palette" rel="tooltip" data-placement="top" ></button>
-  <select class="button palettes-list-select"></select>
+    class="button palettes-list-button create-palette-button piskel-icon-plus"
+    data-action="add"
+    title="Create a new palette"
+    rel="tooltip"
+    data-placement="top"
+    data-test-id="create-palette-button"
+  ></button>
+  <select
+    class="button palettes-list-select"
+    data-test-id="palette-select"
+  ></select>
   <button
-    class="button palettes-list-button edit-palette-button  piskel-icon-pencil" data-action="edit"
-    title="Manage this palette" rel="tooltip" data-placement="top"></button>
+    class="button palettes-list-button edit-palette-button  piskel-icon-pencil"
+    data-action="edit"
+    title="Manage this palette"
+    rel="tooltip"
+    data-placement="top"
+  ></button>
 </div>
 <div class="palettes-list-colors"></div>
 <script type="text/template" id="palette-color-template">
@@ -187,12 +330,9 @@ layout: "editorLayout.html"
     No color in this palette…
   </div>
 </script>
-
 </div>
 
-
-
-      <div class="pull-bottom cursor-coordinates"></div>
+      <div class="pull-bottom cursor-coordinates" data-test-id="cursor-coordinates"></div>
     </div>
   </div>
 
@@ -203,40 +343,45 @@ layout: "editorLayout.html"
   data-setting="user"
   class="tool-icon icon-settings-gear-white"
   title="<span class='highlight'>PREFERENCES</span></br>"
-  rel="tooltip" data-placement="left">
-</div>
+  rel="tooltip"
+  data-placement="left"
+></div>
 
 <div
   data-setting="resize"
   class="tool-icon  icon-settings-resize-white"
   title="<span class='highlight'>RESIZE</span></br>Resize the drawing area"
-  rel="tooltip" data-placement="left">
-</div>
+  rel="tooltip"
+  data-placement="left"
+></div>
 
 <div
   data-setting="save"
   class="tool-icon  icon-settings-save-white"
-  title="<span class='highlight'>SAVE</span></br>Save to your gallery, save locally<br/>or export as a file"
-  rel="tooltip" data-placement="left" >
-</div>
+  title="<span class='highlight'>SAVE</span></br>Save locally or export as a file"
+  rel="tooltip"
+  data-placement="left"
+></div>
 
 <div
   data-setting="export"
   class="tool-icon  icon-settings-export-white"
   title="<span class='highlight'>EXPORT</span></br>Export as Image, as Spritesheet<br/>or as Animated GIF"
-  rel="tooltip" data-placement="left">
-</div>
+  rel="tooltip"
+  data-placement="left"
+></div>
 
 <div
   data-setting="import"
   class="tool-icon  icon-settings-open-folder-white"
   title="<span class='highlight'>IMPORT</span></br>Import an existing image,<br/>an animated GIF or a .piskel file"
-  rel="tooltip" data-placement="left">
+  rel="tooltip"
+  data-placement="left"
+></div>
 </div>
 
-</div>
       <div class="drawer vertical-centerer">
-        <div class="drawer-content" id="drawer-container">
+        <div class="drawer-content" id="drawer-container" data-test-id="settings-drawer">
         </div>
       </div>
     </div>
@@ -244,7 +389,7 @@ layout: "editorLayout.html"
 </div>
 
 <div id="dialog-container-wrapper">
-  <div id="dialog-container">
+  <div id="dialog-container" data-test-id="dialog">
   </div>
 </div>
 
@@ -280,6 +425,7 @@ layout: "editorLayout.html"
   </div>
 </script>
 </div>
+
 <div style="display:none">
 <script type="text/template" id="data-uri-export-partial">
   <style>
@@ -416,6 +562,7 @@ layout: "editorLayout.html"
 </script>
 </div>
 
+
 <span class="cheatsheet-link icon-common-keyboard-gold"
       rel="tooltip" data-placement="right" title="Keyboard shortcuts">&nbsp;</span>
 <div class="performance-link icon-common-warning-red"
@@ -442,7 +589,7 @@ layout: "editorLayout.html"
       If you forgot to save your work or if Piskel crashed, try to restore one of the automatically backed up sessions below (up to 10 sessions).
       <br/>
       <br/>
-      Backups may be erased without notice, so try to save your work to a file or to your gallery as soon as you can.
+      Backups may be erased without notice, so try to save your work to a file as soon as you can.
     </div>
   </div>
   <div class="session-list">
@@ -505,6 +652,7 @@ layout: "editorLayout.html"
 </div>
 </div>
 </script>
+
 <script type="text/template" id="templates/dialogs/browse-local.html">
 <div class="dialog-wrapper">
   <h3 class="dialog-head">
@@ -534,6 +682,7 @@ layout: "editorLayout.html"
   <td><button type="button" data-action="delete" data-name="{{name}}" class="button local-piskel-delete-button">Delete</button></td>
 </tr>
 </script>
+
 <script type="text/template" id="templates/dialogs/cheatsheet.html">
 <div id="cheatsheetContainer" class="dialog-wrapper">
   <h3 class="dialog-head">
@@ -583,6 +732,7 @@ layout: "editorLayout.html"
   <span class="cheatsheet-description">{{description}}</span>
 </li>
 </script>
+
 <script type="text/template" id="templates/dialogs/create-palette.html">
 <div class="dialog-wrapper">
   <h3 class="dialog-head">
@@ -667,6 +817,7 @@ layout: "editorLayout.html"
   <div class="create-palette-remove-color">X</div>
 </li>
 </script>
+
 <script type="text/template" id="templates/dialogs/import.html">
 <div class="dialog-wrapper">
   <h3 class="dialog-head">
@@ -888,6 +1039,7 @@ layout: "editorLayout.html"
   </div>
 </div>
 </script>
+
 <script type="text/template" id="templates/dialogs/unsupported-browser.html">
 <div class="dialog-wrapper">
   <h3 class="dialog-head">
@@ -906,6 +1058,7 @@ layout: "editorLayout.html"
   </div>
 </div>
 </script>
+
 
 <!-- settings-panel partials -->
 <script type="text/html" id="templates/settings/preferences.html">
@@ -971,9 +1124,6 @@ layout: "editorLayout.html"
            title="{{title}}">
       </div>
     </script>
-  </div>
-</div>
-</script>
 
 <script type="text/html" id="templates/settings/preferences/misc.html">
 <div class="preferences-panel-misc">
@@ -1015,6 +1165,7 @@ layout: "editorLayout.html"
   </div>
 </div>
 </script>
+
 <script type="text/html" id="templates/settings/preferences/tile.html">
 <div class="preferences-panel-tile">
   <div class="settings-item">
@@ -1032,6 +1183,7 @@ layout: "editorLayout.html"
   </div>
 </div>
 </script>
+
 <script type="text/html" id="templates/settings/resize.html">
 <div class="settings-section settings-section-resize">
   <!-- RESIZE DRAWING SECTION -->
@@ -1098,16 +1250,11 @@ layout: "editorLayout.html"
     <div class="settings-item">
       <div class="settings-form-section" style="overflow:hidden">
         <label class="row" style="line-height:20px;">Title : </label>
-        <input id="save-name" type="text" class="save-field textfield" autocomplete="off" />
+        <input id="save-name" type="text" class="save-field textfield" autocomplete="off" data-test-id="save-name" />
       </div>
       <div class="settings-form-section">
         <label class="row" style="line-height:20px;">Description : </label>
         <textarea id="save-description" class="save-field textfield"></textarea>
-      </div>
-      <div class="settings-form-section  save-public-section">
-        <label class="row">
-          Public : <input type="checkbox" value="1" name="save-public-checkbox"/>
-        </label>
       </div>
     </div>
   </form>
@@ -1137,10 +1284,11 @@ layout: "editorLayout.html"
 <script type="text/template" id="save-file-download-partial">
 <div class="settings-title">Save offline as File</div>
 <div class="settings-item">
-  <input type="button" class="button button-primary" id="save-file-download-button" value="Save as .piskel" />
+  <input type="button" class="button button-primary" id="save-file-download-button" value="Save as .piskel" data-test-id="save-file-download-button" />
   <div class="save-status">Your sprite will be downloaded as a .piskel file.</div>
 </div>
 </script>
+
 <script type="text/template" id="templates/settings/import.html">
 <div class="settings-section settings-section-import">
   <div class="settings-title">
@@ -1159,7 +1307,7 @@ layout: "editorLayout.html"
     <span>Load a <span class="import-highlight">.piskel</span> file from your computer</span>
 
     <div class="import-section">
-      <button type="button" class="button  button-primary open-piskel-button">Browse .piskel files</button>
+      <button type="button" class="button  button-primary open-piskel-button" data-test-id="import-piskel-button">Browse .piskel files</button>
       <span class="file-input-open-piskel-status"></span>
       <input style="display:none"
         type="file" name="open-piskel-input"
@@ -1172,7 +1320,7 @@ layout: "editorLayout.html"
   <div class="settings-item">
     <div style="margin-top:5px;margin-bottom:5px;">Supports <span class="import-highlight">PNG, JPG, BMP, Animated GIF</span></div>
     <div class="import-section">
-      <button type="button" class="button  button-primary file-input-button">Browse images</button>
+      <button type="button" class="button  button-primary file-input-button" data-test-id="import-image-button">Browse images</button>
       <input style="display:none"
         type="file" name="file-upload-input"
         value="file" accept="image/*"/>
@@ -1184,11 +1332,12 @@ layout: "editorLayout.html"
   <div class="settings-item">
     Browse backups of previous sessions.
     <div style="margin-top:10px;">
-      <button type="button" class="button button-primary browse-backups-button">Browse backups</button>
+      <button type="button" class="button button-primary browse-backups-button" data-test-id="browse-backups-button">Browse backups</button>
     </div>
   </div>
 </div>
 </script>
+
 <script type="text/html" id="templates/settings/export.html">
 <div class="settings-section settings-section-export">
   <div class="settings-title">Export</div>
@@ -1196,20 +1345,20 @@ layout: "editorLayout.html"
       rel="tooltip"
       data-placement="top">
     <label for="scale-input">Scale</label>
-    <input type="range" class="scale-input" name="scale-input" min="1"  max="32" step="1"/>
-    <span class="scale-text"></span>
+    <input type="range" data-test-id="export-scale-slider" class="scale-input" name="scale-input" min="1"  max="32" step="1"/>
+    <span class="scale-text" data-test-id="export-scale-text"></span>
   </div>
   <div class="settings-item export-resize">
     <span class="resize-label">Resolution</span>
-    <input type="text" class="textfield  resize-field  resize-width" autocomplete="off" name="resize-width"/>
+    <input type="text" class="textfield  resize-field  resize-width" data-test-id="export-width-input" autocomplete="off" name="resize-width"/>
     <div class="resize-label">x</div>
-    <input type="text" class="textfield  resize-field  resize-height" autocomplete="off" name="resize-height"/>
+    <input type="text" class="textfield  resize-field  resize-height" data-test-id="export-height-input" autocomplete="off" name="resize-height"/>
   </div>
   <div class="export-tabs tab-list">
-    <div class="export-tab tab-item" data-tab-id="gif">GIF</div>
-    <div class="export-tab tab-item" data-tab-id="png">PNG</div>
-    <div class="export-tab tab-item" data-tab-id="zip">Zip</div>
-    <div class="export-tab tab-item" data-tab-id="misc">Others</div>
+    <div class="export-tab tab-item" data-tab-id="gif" data-test-id="export-tab-gif">GIF</div>
+    <div class="export-tab tab-item" data-tab-id="png" data-test-id="export-tab-png">PNG</div>
+    <div class="export-tab tab-item" data-tab-id="zip" data-test-id="export-tab-zip">Zip</div>
+    <div class="export-tab tab-item" data-tab-id="misc" data-test-id="export-tab-misc">Others</div>
   </div>
   <div class="export-panel tab-content"></div>
 </div>
@@ -1223,7 +1372,7 @@ layout: "editorLayout.html"
     <div style="display: flex; line-height: 20px;">
       <div style="flex: 1;">
         <span>Columns</span>
-        <input type="number" min="1" class="textfield" id="png-export-columns" name="png-export-columns">
+        <input type="number" min="1" class="textfield" id="png-export-columns" name="png-export-columns" data-test-id="png-columns-input">
       </div>
       <div style="flex: 1;">
         <span>Rows</span>
@@ -1236,7 +1385,7 @@ layout: "editorLayout.html"
       <span class="highlight export-panel-row">Spritesheet file export: </span>
     </div>
     <div class="export-panel-row">
-      <button type="button" class="button button-primary png-download-button">Download</button>
+      <button type="button" class="button button-primary png-download-button" data-test-id="png-download-button">Download</button>
       <span class="png-export-dimension-info export-info"></span>
     </div>
   </div>
@@ -1269,7 +1418,7 @@ layout: "editorLayout.html"
       <span class="highlight">Selected frame export:</span>
     </div>
     <div class="export-panel-row">
-      <button type="button" class="button button-primary selected-frame-download-button"/>Download</button>
+      <button type="button" class="button button-primary selected-frame-download-button" data-test-id="png-selected-frame-download-button"/>Download</button>
       <span class="export-info">Single frame as a PNG file</span>
     </div>
   </div>
@@ -1278,29 +1427,30 @@ layout: "editorLayout.html"
 </script>
 
 <script type="text/html" id="templates/settings/export/gif.html">
-<div class="export-panel-gif">
+<div class="export-panel-gif" data-test-id="gif-export-panel">
   <div class="export-panel-header export-info">
     Convert your sprite to an animated GIF.
   </div>
-  <div class="gif-export-warning">
+  <div class="gif-export-warning" data-test-id="gif-colors-warning">
     <div class="gif-export-warning-icon icon-common-warning-red">&nbsp;</div>
     <div class="gif-export-warning-message">
       Too many colors: can not preserve original colors or transparency.
     </div>
   </div>
   <div class="export-panel-section export-panel-row">
-    <input id="gif-repeat-checkbox" class="gif-repeat-checkbox checkbox-fix" type="checkbox" />
+    <input id="gif-repeat-checkbox" class="gif-repeat-checkbox checkbox-fix" data-test-id="gif-loop-checkbox" type="checkbox" />
     <label for="gif-repeat-checkbox"
            title="Uncheck to play the animation only one time."
            rel="tooltip"
            data-placement="top">Loop repeatedly</label>
   </div>
   <div class="export-panel-section export-panel-row">
-    <button type="button" class="button button-primary gif-download-button">Download</button>
+    <button type="button" class="button button-primary gif-download-button" data-test-id="gif-download-button">Download</button>
     <div class="export-info">Download as an animated GIF.</div>
   </div>
 </div>
 </script>
+
 <script type="text/html" id="templates/settings/export/zip.html">
 <div class="export-panel-zip">
   <div class="export-panel-header export-info">ZIP archive containing one PNG for each frame. File names will start with the prefix below.</div>
@@ -1318,7 +1468,7 @@ layout: "editorLayout.html"
       <input id="zip-use-layer-names" class="zip-use-layer-names-checkbox checkbox-fix" type="checkbox" />
       <label for="zip-use-layer-names">Index by layer names</label>
     </div>
-    <button type="button" class="button button-primary zip-generate-button"/>Download ZIP</button>
+    <button type="button" class="button button-primary zip-generate-button" data-test-id="zip-download-button"/>Download ZIP</button>
   </div>
 </div>
 </script>
@@ -1335,7 +1485,7 @@ layout: "editorLayout.html"
         C file with frame rendered as array.
       </span>
     </div>
-    <button type="button" class="button button-primary c-download-button">Download C file</button>
+    <button type="button" class="button button-primary c-download-button" data-test-id="c-file-download-button">Download C file</button>
   </div>
   <div class="export-panel-section">
     <div style="padding-bottom: 5px">
@@ -1346,103 +1496,56 @@ layout: "editorLayout.html"
 </div>
 </script>
 
+
 <script type="text/javascript">
   (function () {
-
-/**
- * See @Gruntfile.js => after build, -2026-01-30-08-15 is replaced by the build version
- */
-var version = '-2026-01-30-08-15';
-var versionHasNotBeenReplaced = version.indexOf('@@') === 0;
-if (versionHasNotBeenReplaced)  {
-  version = '';
-}
-
-if (!window.piskelReadyCallbacks) {
-  window.piskelReadyCallbacks = [];
-}
-
-window._onPiskelReady = function () {
-  var loadingMask = document.getElementById('loading-mask');
-  loadingMask.style.opacity = 0;
-  window.setTimeout(function () {loadingMask.parentNode.removeChild(loadingMask);}, 600);
-  pskl.app.init();
-  pskl._releaseVersion = '0.15.2-SNAPSHOT';
-  // cleanup
-  delete window.pskl_exports;
-  delete window.loadDebugScripts;
-  delete window.done;
-
-  // Run Piskel ready callbacks
-  for (var i = 0; i < window.piskelReadyCallbacks.length; i++) {
-    window.piskelReadyCallbacks[i]();
+  /**
+   * This file is compiled to JavaScript and inlined into index.html via
+   * @@include('piskel-boot.ts'). During build, the html-include vite plugin
+   * replaces -2026-11-23-01-47 with the build timestamp (e.g. '-2026-04-05-12-19').
+   */
+  const version = "-2026-11-23-01-47";
+  if (!window.piskelReadyCallbacks) {
+      window.piskelReadyCallbacks = [];
   }
-};
-
-var prefixPath = function (path) {
-  if (window.pskl && window.pskl.appEngineToken_) {
-    return '../' + path;
-  } else {
-    return path;
-  }
-};
-
-var loadScript = function (src, callback) {
-  src = prefixPath(src);
-  var script = window.document.createElement('script');
-  script.setAttribute('src',src);
-  script.setAttribute('onload',callback);
-  window.document.body.appendChild(script);
-};
-
-var loadStyle = function (src) {
-  src = prefixPath(src);
-  var link = document.createElement('link');
-  link.setAttribute('href', src);
-  link.setAttribute('rel', 'stylesheet');
-  link.setAttribute('type', 'text/css');
-  document.head.appendChild(link);
-};
-
-if (window.location.href.indexOf('debug') != -1) {
-  window.pskl_exports = {};
-  var scriptIndex = 0;
-  window.loadNextScript = function () {
-    if (scriptIndex == window.pskl_exports.scripts.length) {
-      window._onPiskelReady();
-    } else {
-      loadScript(window.pskl_exports.scripts[scriptIndex], 'loadNextScript()');
-      scriptIndex ++;
-    }
+  window._onPiskelReady = function () {
+      const loadingMask = document.getElementById("loading-mask");
+      if (loadingMask === null) {
+          throw new Error("Missing element: #loading-mask");
+      }
+      const mask = loadingMask;
+      mask.style.opacity = "0";
+      window.setTimeout(function () {
+          const parent = mask.parentNode;
+          if (parent === null) {
+              throw new Error("Missing parent of #loading-mask");
+          }
+          parent.removeChild(mask);
+      }, 600);
+      const init = window.pskl.app.init;
+      if (init === undefined) {
+          throw new Error("Missing pskl.app.init");
+      }
+      init();
+      window.pskl._releaseVersion = "0.15.2-SNAPSHOT";
+      for (let i = 0; i < window.piskelReadyCallbacks.length; i++) {
+          window.piskelReadyCallbacks[i]();
+      }
   };
-  loadScript('piskel-script-list.js', 'loadNextScript()');
-
-  var styles;
-  window.loadStyles = function () {
-    styles = window.pskl_exports.styles;
-    for (var i = 0 ; i < styles.length ; i++) {
-      loadStyle(styles[i]);
-    }
+  const loadScript = function (src, callback) {
+      const script = window.document.createElement("script");
+      script.setAttribute("src", src);
+      script.setAttribute("onload", callback);
+      window.document.body.appendChild(script);
   };
-
-  window.reloadStyles = function () {
-    for (var i = 0 ; i < styles.length ; i++) {
-      document.querySelector('link[href="' + styles[i] + '"]').remove();
-      loadStyle(styles[i]);
-    }
+  const loadStyle = function (src) {
+      const link = document.createElement("link");
+      link.setAttribute("href", src);
+      link.setAttribute("rel", "stylesheet");
+      link.setAttribute("type", "text/css");
+      document.head.appendChild(link);
   };
-
-  loadScript('piskel-style-list.js', 'loadStyles()');
-} else {
-  var script;
-  if (window.location.href.indexOf('pack') != -1) {
-    script = 'js/piskel-packaged' + version + '.js';
-  } else {
-    script = 'js/piskel-packaged-min' + version + '.js';
-  }
-
-  loadStyle('css/piskel-style-packaged' + version + '.css');
-  loadScript(script, '_onPiskelReady()');
-}
+  loadStyle("css/piskel-style-packaged" + version + ".css");
+  loadScript("js/piskel-packaged-min" + version + ".js", "_onPiskelReady()");
 })();
 </script>
